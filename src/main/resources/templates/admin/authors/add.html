@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="it" xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: layout(~{::title}, ~{::#content})}">
+<head>
+    <title>Aggiungi Autore</title>
+</head>
+<body>
+    <div id="content">
+        <!-- Breadcrumb -->
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/">Home</a></li>
+                <li class="breadcrumb-item"><a href="/admin">Amministrazione</a></li>
+                <li class="breadcrumb-item active">Aggiungi Autore</li>
+            </ol>
+        </nav>
+
+        <div class="row">
+            <div class="col-md-8 mx-auto">
+                <div class="card">
+                    <div class="card-header">
+                        <h4><i class="bi bi-person-plus"></i> Aggiungi Nuovo Autore</h4>
+                    </div>
+                    <div class="card-body">
+                        <form action="/admin/authors/add" method="post" enctype="multipart/form-data">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="firstName" class="form-label">Nome *</label>
+                                    <input type="text" class="form-control" id="firstName" name="firstName" 
+                                           placeholder="Nome dell'autore" required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="lastName" class="form-label">Cognome *</label>
+                                    <input type="text" class="form-control" id="lastName" name="lastName" 
+                                           placeholder="Cognome dell'autore" required>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="birthDate" class="form-label">Data di Nascita *</label>
+                                    <input type="date" class="form-control" id="birthDate" name="birthDate" required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="deathDate" class="form-label">Data di Morte</label>
+                                    <input type="date" class="form-control" id="deathDate" name="deathDate">
+                                    <div class="form-text">Lascia vuoto se l'autore è ancora vivo</div>
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="nationality" class="form-label">Nazionalità *</label>
+                                <input type="text" class="form-control" id="nationality" name="nationality" 
+                                       placeholder="Es: Italiana, Americana, Francese..." required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="photoFile" class="form-label">Foto Autore</label>
+                                <input type="file" class="form-control" id="photoFile" name="photoFile" 
+                                       accept="image/*">
+                                <div class="form-text">Carica una foto dell'autore (formati supportati: JPG, PNG, GIF)</div>
+                            </div>
+
+                            <div class="d-flex justify-content-between">
+                                <a href="/admin" class="btn btn-secondary">
+                                    <i class="bi bi-arrow-left"></i> Annulla
+                                </a>
+                                <button type="submit" class="btn btn-success">
+                                    <i class="bi bi-check-circle"></i> Aggiungi Autore
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html> 

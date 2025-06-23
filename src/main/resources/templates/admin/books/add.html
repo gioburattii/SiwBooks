@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="it" xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: layout(~{::title}, ~{::#content})}">
+<head>
+    <title>Aggiungi Libro</title>
+</head>
+<body>
+    <div id="content">
+        <!-- Breadcrumb -->
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/">Home</a></li>
+                <li class="breadcrumb-item"><a href="/admin">Amministrazione</a></li>
+                <li class="breadcrumb-item active">Aggiungi Libro</li>
+            </ol>
+        </nav>
+
+        <div class="row">
+            <div class="col-md-8 mx-auto">
+                <div class="card">
+                    <div class="card-header">
+                        <h4><i class="bi bi-book-half"></i> Aggiungi Nuovo Libro</h4>
+                    </div>
+                    <div class="card-body">
+                        <form action="/admin/books/add" method="post" enctype="multipart/form-data">
+                            <div class="mb-3">
+                                <label for="title" class="form-label">Titolo *</label>
+                                <input type="text" class="form-control" id="title" name="title" 
+                                       placeholder="Inserisci il titolo del libro" required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="publicationYear" class="form-label">Anno di Pubblicazione *</label>
+                                <input type="number" class="form-control" id="publicationYear" name="publicationYear" 
+                                       min="1000" max="2024" placeholder="Es: 2023" required>
+                                <div class="form-text">Inserisci un anno valido (minimo 1000)</div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="authorIds" class="form-label">Autori</label>
+                                <div th:if="${authors != null and !authors.isEmpty()}">
+                                    <div class="row">
+                                        <div class="col-md-6" th:each="author : ${authors}">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" 
+                                                       th:value="${author.id}" 
+                                                       th:id="'author' + ${author.id}" 
+                                                       name="authorIds">
+                                                <label class="form-check-label" th:for="'author' + ${author.id}">
+                                                    <span th:text="${author.fullName}">Nome Autore</span>
+                                                    <small class="text-muted d-block" th:text="${author.nationality}">Nazionalità</small>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div th:if="${authors == null or authors.isEmpty()}" class="alert alert-warning">
+                                    <i class="bi bi-exclamation-triangle"></i>
+                                    Nessun autore disponibile. 
+                                    <a href="/admin/authors/add" class="alert-link">Aggiungi prima un autore</a>.
+                                </div>
+                                <div class="form-text">Seleziona uno o più autori per questo libro</div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="imageFiles" class="form-label">Immagini del Libro</label>
+                                <input type="file" class="form-control" id="imageFiles" name="imageFiles" 
+                                       accept="image/*" multiple>
+                                <div class="form-text">Carica una o più immagini del libro (formati supportati: JPG, PNG, GIF)</div>
+                            </div>
+
+                            <div class="d-flex justify-content-between">
+                                <a href="/admin" class="btn btn-secondary">
+                                    <i class="bi bi-arrow-left"></i> Annulla
+                                </a>
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="bi bi-check-circle"></i> Aggiungi Libro
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html> 

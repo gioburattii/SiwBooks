@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="it" xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: layout(~{::title}, ~{::#content})}">
+<head>
+    <title>Modifica Libro</title>
+</head>
+<body>
+    <div id="content">
+        <!-- Breadcrumb -->
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/">Home</a></li>
+                <li class="breadcrumb-item"><a href="/admin">Amministrazione</a></li>
+                <li class="breadcrumb-item active">Modifica Libro</li>
+            </ol>
+        </nav>
+
+        <div class="row">
+            <div class="col-md-8 mx-auto">
+                <div class="card">
+                    <div class="card-header">
+                        <h4><i class="bi bi-book-half"></i> Modifica Libro: <span th:text="${book.title}">Titolo Libro</span></h4>
+                    </div>
+                    <div class="card-body">
+                        <!-- Current Images Preview -->
+                        <div class="mb-4" th:if="${book.imageUrls != null and !book.imageUrls.isEmpty()}">
+                            <label class="form-label">Immagini Attuali:</label>
+                            <div class="row">
+                                <div class="col-md-3 mb-2" th:each="imageUrl : ${book.imageUrls}">
+                                    <img th:src="${imageUrl}" th:alt="${book.title}" 
+                                         class="img-thumbnail w-100" style="max-height: 150px; object-fit: cover;">
+                                </div>
+                            </div>
+                        </div>
+
+                        <form th:action="@{/admin/books/edit/{id}(id=${book.id})}" method="post" enctype="multipart/form-data">
+                            <div class="mb-3">
+                                <label for="title" class="form-label">Titolo *</label>
+                                <input type="text" class="form-control" id="title" name="title" 
+                                       th:value="${book.title}" placeholder="Inserisci il titolo del libro" required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="publicationYear" class="form-label">Anno di Pubblicazione *</label>
+                                <input type="number" class="form-control" id="publicationYear" name="publicationYear" 
+                                       th:value="${book.publicationYear}" min="1000" max="2024" placeholder="Es: 2023" required>
+                                <div class="form-text">Inserisci un anno valido (minimo 1000)</div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="authorIds" class="form-label">Autori</label>
+                                <div th:if="${authors != null and !authors.isEmpty()}">
+                                    <div class="row">
+                                        <div class="col-md-6" th:each="author : ${authors}">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" 
+                                                       th:value="${author.id}" 
+                                                       th:id="'author' + ${author.id}" 
+                                                       th:checked="${book.authors != null and book.authors.contains(author)}"
+                                                       name="authorIds">
+                                                <label class="form-check-label" th:for="'author' + ${author.id}">
+                                                    <span th:text="${author.fullName}">Nome Autore</span>
+                                                    <small class="text-muted d-block" th:text="${author.nationality}">Nazionalità</small>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div th:if="${authors == null or authors.isEmpty()}" class="alert alert-warning">
+                                    <i class="bi bi-exclamation-triangle"></i>
+                                    Nessun autore disponibile. 
+                                    <a href="/admin/authors/add" class="alert-link">Aggiungi prima un autore</a>.
+                                </div>
+                                <div class="form-text">Seleziona uno o più autori per questo libro</div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="imageFiles" class="form-label">Nuove Immagini del Libro</label>
+                                <input type="file" class="form-control" id="imageFiles" name="imageFiles" 
+                                       accept="image/*" multiple>
+                                <div class="form-text">
+                                    Carica nuove immagini per sostituire quelle attuali (formati supportati: JPG, PNG, GIF).
+                                    Lascia vuoto per mantenere le immagini attuali.
+                                </div>
+                            </div>
+
+                            <div class="d-flex justify-content-between">
+                                <a href="/admin" class="btn btn-secondary">
+                                    <i class="bi bi-arrow-left"></i> Annulla
+                                </a>
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="bi bi-check-circle"></i> Salva Modifiche
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html> 

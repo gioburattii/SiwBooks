@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="it" xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: layout(~{::title}, ~{::#content})}">
+<head>
+    <title>Modifica Autore</title>
+</head>
+<body>
+    <div id="content">
+        <!-- Breadcrumb -->
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/">Home</a></li>
+                <li class="breadcrumb-item"><a href="/admin">Amministrazione</a></li>
+                <li class="breadcrumb-item active">Modifica Autore</li>
+            </ol>
+        </nav>
+
+        <div class="row">
+            <div class="col-md-8 mx-auto">
+                <div class="card">
+                    <div class="card-header">
+                        <h4><i class="bi bi-person-gear"></i> Modifica Autore: <span th:text="${author.fullName}">Nome Autore</span></h4>
+                    </div>
+                    <div class="card-body">
+                        <!-- Current Photo Preview -->
+                        <div class="mb-4" th:if="${author.photoUrl != null}">
+                            <label class="form-label">Foto Attuale:</label>
+                            <div class="text-center">
+                                <img th:src="${author.photoUrl}" th:alt="${author.fullName}" 
+                                     class="img-thumbnail" style="max-height: 200px;">
+                            </div>
+                        </div>
+
+                        <form th:action="@{/admin/authors/edit/{id}(id=${author.id})}" method="post" enctype="multipart/form-data">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="firstName" class="form-label">Nome *</label>
+                                    <input type="text" class="form-control" id="firstName" name="firstName" 
+                                           th:value="${author.firstName}" placeholder="Nome dell'autore" required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="lastName" class="form-label">Cognome *</label>
+                                    <input type="text" class="form-control" id="lastName" name="lastName" 
+                                           th:value="${author.lastName}" placeholder="Cognome dell'autore" required>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="birthDate" class="form-label">Data di Nascita *</label>
+                                    <input type="date" class="form-control" id="birthDate" name="birthDate" 
+                                           th:value="${author.birthDate}" required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="deathDate" class="form-label">Data di Morte</label>
+                                    <input type="date" class="form-control" id="deathDate" name="deathDate"
+                                           th:value="${author.deathDate}">
+                                    <div class="form-text">Lascia vuoto se l'autore è ancora vivo</div>
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="nationality" class="form-label">Nazionalità *</label>
+                                <input type="text" class="form-control" id="nationality" name="nationality" 
+                                       th:value="${author.nationality}" placeholder="Es: Italiana, Americana, Francese..." required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="photoFile" class="form-label">Nuova Foto Autore</label>
+                                <input type="file" class="form-control" id="photoFile" name="photoFile" 
+                                       accept="image/*">
+                                <div class="form-text">
+                                    Carica una nuova foto dell'autore per sostituire quella attuale (formati supportati: JPG, PNG, GIF).
+                                    Lascia vuoto per mantenere la foto attuale.
+                                </div>
+                            </div>
+
+                            <div class="d-flex justify-content-between">
+                                <a href="/admin" class="btn btn-secondary">
+                                    <i class="bi bi-arrow-left"></i> Annulla
+                                </a>
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="bi bi-check-circle"></i> Salva Modifiche
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html> 

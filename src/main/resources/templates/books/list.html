@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="it" xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: layout(~{::title}, ~{::#content})}">
+<head>
+    <title>Libri</title>
+</head>
+<body>
+    <div id="content">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1><i class="bi bi-book"></i> Catalogo Libri</h1>
+            <div class="text-muted">
+                <span th:text="${#lists.size(books)}">0</span> libri trovati
+            </div>
+        </div>
+
+        <!-- Books Grid -->
+        <div class="row" th:if="${books != null and !books.isEmpty()}">
+            <div class="col-md-6 col-lg-4 mb-4" th:each="book : ${books}">
+                <div class="card h-100">
+                    <div class="bg-light d-flex align-items-center justify-content-center" style="height: 250px;">
+                        <i class="bi bi-book display-1 text-muted" th:if="${book.imageUrls == null or book.imageUrls.isEmpty()}"></i>
+                        <img th:if="${book.imageUrls != null and !book.imageUrls.isEmpty()}" 
+                             th:src="${book.imageUrls[0]}" 
+                             th:alt="${book.title}" 
+                             class="img-fluid" 
+                             style="max-height: 100%; max-width: 100%; object-fit: contain;"
+                             onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="d-none align-items-center justify-content-center h-100" style="flex-direction: column;">
+                            <i class="bi bi-image display-1 text-muted"></i>
+                            <small class="text-muted mt-2">Immagine non disponibile</small>
+                        </div>
+                    </div>
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title" th:text="${book.title}">Titolo Libro</h5>
+                        
+                        <p class="card-text">
+                            <small class="text-muted">
+                                <i class="bi bi-calendar"></i> 
+                                <span th:text="${book.publicationYear}">Anno</span>
+                            </small>
+                        </p>
+                        
+                        <p class="card-text" th:if="${book.authors != null and !book.authors.isEmpty()}">
+                            <small class="text-muted">
+                                <i class="bi bi-person"></i>
+                                <span th:each="author, iterStat : ${book.authors}">
+                                    <a th:href="@{/authors/{id}(id=${author.id})}" 
+                                       th:text="${author.fullName}" 
+                                       class="text-decoration-none">Autore</a>
+                                    <span th:if="${!iterStat.last}">, </span>
+                                </span>
+                            </small>
+                        </p>
+                        
+                        <div class="mt-auto">
+                            <!-- Rating -->
+                            <div class="mb-2" th:if="${book.averageRating > 0}">
+                                <div class="rating">
+                                    <span th:each="i : ${#numbers.sequence(1, 5)}">
+                                        <i class="bi bi-star-fill" th:if="${i <= book.averageRating}"></i>
+                                        <i class="bi bi-star" th:if="${i > book.averageRating}"></i>
+                                    </span>
+                                    <small class="text-muted ms-1">
+                                        <span th:text="${#numbers.formatDecimal(book.averageRating, 1, 1)}">0.0</span>
+                                        (<span th:text="${book.reviewCount}">0</span> recensioni)
+                                    </small>
+                                </div>
+                            </div>
+                            <div class="mb-2" th:if="${book.averageRating == 0}">
+                                <small class="text-muted">Nessuna recensione</small>
+                            </div>
+                            
+                            <a th:href="@{/books/{id}(id=${book.id})}" class="btn btn-primary w-100">
+                                <i class="bi bi-eye"></i> Visualizza Dettagli
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Empty State -->
+        <div class="text-center py-5" th:if="${books == null or books.isEmpty()}">
+            <i class="bi bi-book display-1 text-muted"></i>
+            <h3 class="mt-3">Nessun libro trovato</h3>
+            <p class="text-muted">Non ci sono libri nel catalogo al momento.</p>
+            <a href="/" class="btn btn-primary">
+                <i class="bi bi-house"></i> Torna alla Homepage
+            </a>
+        </div>
+    </div>
+</body>
+</html> 

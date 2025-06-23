@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="it" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" th:replace="~{layout :: layout(~{::title}, ~{::#content})}">
+<head>
+    <title>Homepage</title>
+</head>
+<body>
+    <div id="content">
+        <!-- Hero Section -->
+        <div class="jumbotron bg-light p-5 rounded-3 mb-4">
+            <div class="container-fluid py-5">
+                <h1 class="display-5 fw-bold">
+                    <i class="bi bi-book-half text-primary"></i> 
+                    Benvenuto in SIW Books
+                </h1>
+                <p class="col-md-8 fs-4">
+                    Scopri la nostra collezione di libri, leggi le recensioni degli utenti e trova i tuoi prossimi libri da leggere.
+                </p>
+                <a class="btn btn-primary btn-lg" href="/books" role="button">
+                    <i class="bi bi-search"></i> Esplora i Libri
+                </a>
+            </div>
+        </div>
+
+        <!-- Statistics -->
+        <div class="row mb-4">
+            <div class="col-md-4">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <i class="bi bi-book display-4 text-primary"></i>
+                        <h5 class="card-title mt-2" th:text="${#lists.size(books)} + ' Libri'">0 Libri</h5>
+                        <p class="card-text">nella nostra collezione</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <i class="bi bi-person display-4 text-success"></i>
+                        <h5 class="card-title mt-2" th:text="${#lists.size(authors)} + ' Autori'">0 Autori</h5>
+                        <p class="card-text">da tutto il mondo</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <i class="bi bi-star display-4 text-warning"></i>
+                        <h5 class="card-title mt-2">Recensioni</h5>
+                        <p class="card-text">dai nostri lettori</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Featured Books -->
+        <div class="row">
+            <div class="col-12">
+                <h2 class="mb-4">
+                    <i class="bi bi-star-fill text-warning"></i> 
+                    Libri in Evidenza
+                </h2>
+            </div>
+        </div>
+
+        <div class="row" th:if="${books != null and !books.isEmpty()}">
+            <div class="col-md-4 mb-4" th:each="book, iterStat : ${books}" th:if="${iterStat.index < 6}">
+                <div class="card h-100">
+                    <div class="bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
+                        <i class="bi bi-book display-1 text-muted" th:if="${book.imageUrls == null or book.imageUrls.isEmpty()}"></i>
+                        <img th:if="${book.imageUrls != null and !book.imageUrls.isEmpty()}" 
+                             th:src="${book.imageUrls[0]}" 
+                             th:alt="${book.title}" 
+                             class="img-fluid" 
+                             style="max-height: 100%; max-width: 100%; object-fit: contain;"
+                             onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="d-none align-items-center justify-content-center h-100" style="flex-direction: column;">
+                            <i class="bi bi-image display-1 text-muted"></i>
+                            <small class="text-muted mt-2">Immagine non disponibile</small>
+                        </div>
+                    </div>
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title" th:text="${book.title}">Titolo Libro</h5>
+                        <p class="card-text">
+                            <small class="text-muted">
+                                <i class="bi bi-calendar"></i> 
+                                <span th:text="${book.publicationYear}">Anno</span>
+                            </small>
+                        </p>
+                        <p class="card-text" th:if="${book.authors != null and !book.authors.isEmpty()}">
+                            <small class="text-muted">
+                                <i class="bi bi-person"></i>
+                                <span th:each="author, iterStat : ${book.authors}">
+                                    <span th:text="${author.fullName}">Autore</span>
+                                    <span th:if="${!iterStat.last}">, </span>
+                                </span>
+                            </small>
+                        </p>
+                        <div class="mt-auto">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div class="rating" th:if="${book.averageRating > 0}">
+                                    <span th:each="i : ${#numbers.sequence(1, 5)}">
+                                        <i class="bi bi-star-fill" th:if="${i <= book.averageRating}"></i>
+                                        <i class="bi bi-star" th:if="${i > book.averageRating}"></i>
+                                    </span>
+                                    <small class="text-muted ms-1" th:text="'(' + ${book.reviewCount} + ')'"></small>
+                                </div>
+                                <a th:href="@{/books/{id}(id=${book.id})}" class="btn btn-outline-primary btn-sm">
+                                    <i class="bi bi-eye"></i> Dettagli
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Empty State -->
+        <div class="text-center py-5" th:if="${books == null or books.isEmpty()}">
+            <i class="bi bi-book display-1 text-muted"></i>
+            <h3 class="mt-3">Nessun libro disponibile</h3>
+            <p class="text-muted">La collezione è vuota. Torna più tardi!</p>
+        </div>
+
+        <!-- Call to Action -->
+        <div class="row mt-5">
+            <div class="col-12 text-center">
+                <h3>Vuoi contribuire?</h3>
+                <p class="lead">Registrati per aggiungere le tue recensioni e aiutare altri lettori a scoprire nuovi libri!</p>
+                <a href="/register" class="btn btn-success btn-lg me-2" sec:authorize="!isAuthenticated()">
+                    <i class="bi bi-person-plus"></i> Registrati Ora
+                </a>
+                <a href="/books" class="btn btn-outline-primary btn-lg">
+                    <i class="bi bi-collection"></i> Sfoglia Tutti i Libri
+                </a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

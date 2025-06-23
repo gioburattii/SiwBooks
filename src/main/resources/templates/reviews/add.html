@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="it" xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: layout(~{::title}, ~{::#content})}">
+<head>
+    <title>Aggiungi Recensione</title>
+</head>
+<body>
+    <div id="content">
+        <!-- Breadcrumb -->
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/">Home</a></li>
+                <li class="breadcrumb-item"><a href="/books">Libri</a></li>
+                <li class="breadcrumb-item">
+                    <a th:href="@{/books/{id}(id=${book.id})}" th:text="${book.title}">Libro</a>
+                </li>
+                <li class="breadcrumb-item active">Aggiungi Recensione</li>
+            </ol>
+        </nav>
+
+        <div class="row">
+            <div class="col-md-8 mx-auto">
+                <div class="card">
+                    <div class="card-header">
+                        <h4>
+                            <i class="bi bi-star"></i> 
+                            Aggiungi Recensione per "<span th:text="${book.title}">Libro</span>"
+                        </h4>
+                    </div>
+                    <div class="card-body">
+                        <!-- Book Info -->
+                        <div class="row mb-4">
+                            <div class="col-md-3">
+                                <div class="bg-light d-flex align-items-center justify-content-center" style="height: 150px;">
+                                    <i class="bi bi-book display-4 text-muted" th:if="${book.imageUrls == null or book.imageUrls.isEmpty()}"></i>
+                                    <img th:if="${book.imageUrls != null and !book.imageUrls.isEmpty()}" 
+                                         th:src="${book.imageUrls[0]}" 
+                                         th:alt="${book.title}" 
+                                         class="img-fluid" style="max-height: 150px;">
+                                </div>
+                            </div>
+                            <div class="col-md-9">
+                                <h5 th:text="${book.title}">Titolo Libro</h5>
+                                <p class="text-muted" th:if="${book.authors != null and !book.authors.isEmpty()}">
+                                    <i class="bi bi-person"></i>
+                                    <span th:each="author, iterStat : ${book.authors}">
+                                        <span th:text="${author.fullName}">Autore</span>
+                                        <span th:if="${!iterStat.last}">, </span>
+                                    </span>
+                                </p>
+                                <p class="text-muted">
+                                    <i class="bi bi-calendar"></i> 
+                                    <span th:text="${book.publicationYear}">Anno</span>
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Review Form -->
+                        <form th:action="@{/reviews/add/{bookId}(bookId=${book.id})}" method="post">
+                            <div class="mb-3">
+                                <label for="title" class="form-label">Titolo della Recensione *</label>
+                                <input type="text" class="form-control" id="title" name="title" 
+                                       placeholder="Es: Un libro fantastico!" required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="rating" class="form-label">Valutazione *</label>
+                                <div class="rating-input">
+                                    <div class="btn-group" role="group" aria-label="Rating">
+                                        <input type="radio" class="btn-check" name="rating" id="rating1" value="1" required>
+                                        <label class="btn btn-outline-warning" for="rating1">
+                                            <i class="bi bi-star"></i> 1
+                                        </label>
+
+                                        <input type="radio" class="btn-check" name="rating" id="rating2" value="2">
+                                        <label class="btn btn-outline-warning" for="rating2">
+                                            <i class="bi bi-star"></i> 2
+                                        </label>
+
+                                        <input type="radio" class="btn-check" name="rating" id="rating3" value="3">
+                                        <label class="btn btn-outline-warning" for="rating3">
+                                            <i class="bi bi-star"></i> 3
+                                        </label>
+
+                                        <input type="radio" class="btn-check" name="rating" id="rating4" value="4">
+                                        <label class="btn btn-outline-warning" for="rating4">
+                                            <i class="bi bi-star"></i> 4
+                                        </label>
+
+                                        <input type="radio" class="btn-check" name="rating" id="rating5" value="5">
+                                        <label class="btn btn-outline-warning" for="rating5">
+                                            <i class="bi bi-star"></i> 5
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="form-text">Seleziona un voto da 1 a 5 stelle</div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="content" class="form-label">Recensione</label>
+                                <textarea class="form-control" id="content" name="content" rows="6" 
+                                          placeholder="Scrivi qui la tua recensione dettagliata del libro..."></textarea>
+                                <div class="form-text">Condividi la tua opinione sul libro (opzionale)</div>
+                            </div>
+
+                            <div class="d-flex justify-content-between">
+                                <a th:href="@{/books/{id}(id=${book.id})}" class="btn btn-secondary">
+                                    <i class="bi bi-arrow-left"></i> Annulla
+                                </a>
+                                <button type="submit" class="btn btn-success">
+                                    <i class="bi bi-check-circle"></i> Pubblica Recensione
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Add visual feedback for rating selection
+        document.querySelectorAll('input[name="rating"]').forEach(radio => {
+            radio.addEventListener('change', function() {
+                const rating = parseInt(this.value);
+                document.querySelectorAll('.btn-outline-warning').forEach((btn, index) => {
+                    if (index < rating) {
+                        btn.classList.remove('btn-outline-warning');
+                        btn.classList.add('btn-warning');
+                    } else {
+                        btn.classList.remove('btn-warning');
+                        btn.classList.add('btn-outline-warning');
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="it" xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: layout(~{::title}, ~{::#content})}">
+<head>
+    <title>Amministrazione</title>
+</head>
+<body>
+    <div id="content">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1><i class="bi bi-gear"></i> Pannello Amministrazione</h1>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="row mb-4">
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body text-center">
+                        <i class="bi bi-book-half display-4 text-primary"></i>
+                        <h5 class="card-title mt-2">Gestione Libri</h5>
+                        <p class="card-text">Aggiungi, modifica o elimina libri dal catalogo</p>
+                        <a href="/admin/books/add" class="btn btn-primary">
+                            <i class="bi bi-plus-circle"></i> Aggiungi Libro
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body text-center">
+                        <i class="bi bi-person display-4 text-success"></i>
+                        <h5 class="card-title mt-2">Gestione Autori</h5>
+                        <p class="card-text">Aggiungi, modifica o elimina autori</p>
+                        <a href="/admin/authors/add" class="btn btn-success">
+                            <i class="bi bi-plus-circle"></i> Aggiungi Autore
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body text-center">
+                        <i class="bi bi-people display-4 text-warning"></i>
+                        <h5 class="card-title mt-2">Gestione Utenti</h5>
+                        <p class="card-text">Crea amministratori e gestisci utenti</p>
+                        <a href="/admin/users/add-admin" class="btn btn-warning">
+                            <i class="bi bi-shield-plus"></i> Crea Admin
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Books Management -->
+        <div class="card mb-4">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5><i class="bi bi-book"></i> Libri nel Catalogo</h5>
+                <span class="badge bg-primary" th:text="${#lists.size(books)}">0</span>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive" th:if="${books != null and !books.isEmpty()}">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Titolo</th>
+                                <th>Anno</th>
+                                <th>Autori</th>
+                                <th>Recensioni</th>
+                                <th>Azioni</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="book : ${books}">
+                                <td th:text="${book.id}">1</td>
+                                <td>
+                                    <a th:href="@{/books/{id}(id=${book.id})}" 
+                                       th:text="${book.title}" 
+                                       class="text-decoration-none">Titolo</a>
+                                </td>
+                                <td th:text="${book.publicationYear}">2023</td>
+                                <td>
+                                    <span th:if="${book.authors != null and !book.authors.isEmpty()}">
+                                        <span th:each="author, iterStat : ${book.authors}">
+                                            <span th:text="${author.fullName}">Autore</span>
+                                            <span th:if="${!iterStat.last}">, </span>
+                                        </span>
+                                    </span>
+                                    <span th:if="${book.authors == null or book.authors.isEmpty()}" class="text-muted">
+                                        Nessun autore
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="badge bg-info" th:text="${book.reviewCount}">0</span>
+                                </td>
+                                <td>
+                                    <div class="btn-group btn-group-sm">
+                                        <a th:href="@{/admin/books/edit/{id}(id=${book.id})}" 
+                                           class="btn btn-outline-primary">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                        <form th:action="@{/admin/books/delete/{id}(id=${book.id})}" 
+                                              method="post" 
+                                              class="d-inline"
+                                              onsubmit="return confirm('Sei sicuro di voler eliminare questo libro?')">
+                                            <button type="submit" class="btn btn-outline-danger">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div th:if="${books == null or books.isEmpty()}" class="text-center py-3">
+                    <i class="bi bi-book display-4 text-muted"></i>
+                    <p class="mt-2 text-muted">Nessun libro nel catalogo</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Authors Management -->
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5><i class="bi bi-person"></i> Autori</h5>
+                <span class="badge bg-success" th:text="${#lists.size(authors)}">0</span>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive" th:if="${authors != null and !authors.isEmpty()}">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Nome</th>
+                                <th>Nazionalità</th>
+                                <th>Data di Nascita</th>
+                                <th>Libri</th>
+                                <th>Azioni</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="author : ${authors}">
+                                <td th:text="${author.id}">1</td>
+                                <td>
+                                    <a th:href="@{/authors/{id}(id=${author.id})}" 
+                                       th:text="${author.fullName}" 
+                                       class="text-decoration-none">Nome Autore</a>
+                                </td>
+                                <td th:text="${author.nationality}">Nazionalità</td>
+                                <td th:text="${#temporals.format(author.birthDate, 'dd/MM/yyyy')}">01/01/1900</td>
+                                <td>
+                                    <span class="badge bg-info" 
+                                          th:text="${author.books != null ? #lists.size(author.books) : 0}">0</span>
+                                </td>
+                                <td>
+                                    <div class="btn-group btn-group-sm">
+                                        <a th:href="@{/admin/authors/edit/{id}(id=${author.id})}" 
+                                           class="btn btn-outline-primary">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                        <form th:action="@{/admin/authors/delete/{id}(id=${author.id})}" 
+                                              method="post" 
+                                              class="d-inline"
+                                              onsubmit="return confirm('Sei sicuro di voler eliminare questo autore?')">
+                                            <button type="submit" class="btn btn-outline-danger">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div th:if="${authors == null or authors.isEmpty()}" class="text-center py-3">
+                    <i class="bi bi-person display-4 text-muted"></i>
+                    <p class="mt-2 text-muted">Nessun autore registrato</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Users Management -->
+        <div class="row mt-5">
+            <div class="col-12">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h3><i class="bi bi-people"></i> Gestione Utenti</h3>
+                    <a href="/admin/users/add-admin" class="btn btn-warning">
+                        <i class="bi bi-shield-plus"></i> Crea Amministratore
+                    </a>
+                </div>
+                
+                <div th:if="${users != null and !users.isEmpty()}" class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Username</th>
+                                <th>Nome Completo</th>
+                                <th>Email</th>
+                                <th>Ruolo</th>
+                                <th>Azioni</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="user : ${users}">
+                                <td th:text="${user.id}">1</td>
+                                <td>
+                                    <span th:text="${user.username}">Username</span>
+                                    <span th:if="${user.role.name() == 'ADMIN'}" class="badge bg-danger ms-1">ADMIN</span>
+                                    <span th:if="${user.role.name() == 'USER'}" class="badge bg-primary ms-1">USER</span>
+                                </td>
+                                <td th:text="${user.firstName + ' ' + user.lastName}">Nome Cognome</td>
+                                <td th:text="${user.email}">email@example.com</td>
+                                <td>
+                                    <form th:action="@{/admin/users/update-role/{id}(id=${user.id})}" 
+                                          method="post" class="d-inline">
+                                        <select name="role" class="form-select form-select-sm d-inline-block w-auto" 
+                                                onchange="this.form.submit()">
+                                            <option value="USER" th:selected="${user.role.name() == 'USER'}">USER</option>
+                                            <option value="ADMIN" th:selected="${user.role.name() == 'ADMIN'}">ADMIN</option>
+                                        </select>
+                                    </form>
+                                </td>
+                                <td>
+                                    <div class="btn-group btn-group-sm">
+                                        <form th:action="@{/admin/users/delete/{id}(id=${user.id})}" 
+                                              method="post" 
+                                              class="d-inline"
+                                              onsubmit="return confirm('Sei sicuro di voler eliminare questo utente? Questa azione eliminerà anche tutte le sue recensioni.')">
+                                            <button type="submit" class="btn btn-outline-danger"
+                                                    th:disabled="${user.username == 'admin'}">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div th:if="${users == null or users.isEmpty()}" class="text-center py-3">
+                    <i class="bi bi-people display-4 text-muted"></i>
+                    <p class="mt-2 text-muted">Nessun utente registrato</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html> 
