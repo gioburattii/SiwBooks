@@ -1,23 +1,23 @@
 package siwbooks.siwbooks.service;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-import siwbooks.siwbooks.model.Book;
-import siwbooks.siwbooks.model.Author;
-import siwbooks.siwbooks.repository.BookRepository;
-import siwbooks.siwbooks.repository.AuthorRepository;
-import siwbooks.siwbooks.service.IFileStorageService;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import java.util.HashSet;
+import siwbooks.siwbooks.model.Author;
+import siwbooks.siwbooks.model.Book;
+import siwbooks.siwbooks.repository.AuthorRepository;
+import siwbooks.siwbooks.repository.BookRepository;
 
 @Service
 @Transactional
@@ -92,6 +92,7 @@ public class BookService {
         return save(book);
     }
     
+    @SuppressWarnings("UseSpecificCatch")
     public Book updateBook(Long id, String title, Integer publicationYear, Set<Long> authorIds,
                           List<MultipartFile> imageFiles) throws IOException {
         logger.info("Starting updateBook for id: {}, title: {}, year: {}, authorIds: {}", 

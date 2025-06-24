@@ -1,7 +1,8 @@
 package siwbooks.siwbooks.service;
 
-import com.cloudinary.Cloudinary;
-import com.cloudinary.utils.ObjectUtils;
+import java.io.IOException;
+import java.util.Map;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,8 +10,8 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
-import java.util.Map;
+import com.cloudinary.Cloudinary;
+import com.cloudinary.utils.ObjectUtils;
 
 @Service
 @Profile("prod")  // Attivo solo in produzione
@@ -67,6 +68,7 @@ public class CloudinaryStorageService implements IFileStorageService {
     }
     
     @Override
+    @SuppressWarnings("UseSpecificCatch")
     public void deleteFile(String fileUrl) {
         if (fileUrl != null && !fileUrl.isEmpty()) {
             try {
