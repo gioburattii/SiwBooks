@@ -69,7 +69,15 @@ public class Author {
     
     // Convenience method for templates
     public String getPhotoUrl() { 
-        return photoPath != null && !photoPath.isEmpty() ? "/uploads/" + photoPath : null; 
+        if (photoPath == null || photoPath.isEmpty()) {
+            return null;
+        }
+        // If it's already a full URL (from Cloudinary), return as is
+        if (photoPath.startsWith("http://") || photoPath.startsWith("https://")) {
+            return photoPath;
+        }
+        // Otherwise, it's a local path
+        return "/uploads/" + photoPath;
     }
     
     public Set<Book> getBooks() { return books; }

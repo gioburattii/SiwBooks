@@ -1,6 +1,7 @@
 package siwbooks.siwbooks.service;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.slf4j.Logger;
@@ -14,13 +15,15 @@ import java.nio.file.StandardCopyOption;
 import java.util.UUID;
 
 @Service
-public class FileUploadService {
+@Profile("!prod")  // Attivo quando NON siamo in produzione
+public class FileUploadService implements IFileStorageService {
     
     private static final Logger logger = LoggerFactory.getLogger(FileUploadService.class);
     
     @Value("${app.upload.dir:uploads}")
     private String uploadDir;
     
+    @Override
     public String saveFile(MultipartFile file, String subDir) throws IOException {
         logger.info("Starting file upload. File: {}, SubDir: {}", 
                    file.getOriginalFilename(), subDir);
@@ -75,6 +78,7 @@ public class FileUploadService {
         return relativePath;
     }
     
+    @Override
     public void deleteFile(String filePath) {
         if (filePath != null && !filePath.isEmpty()) {
             try {

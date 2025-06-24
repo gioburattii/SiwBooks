@@ -10,6 +10,7 @@ import siwbooks.siwbooks.model.Book;
 import siwbooks.siwbooks.model.Author;
 import siwbooks.siwbooks.repository.BookRepository;
 import siwbooks.siwbooks.repository.AuthorRepository;
+import siwbooks.siwbooks.service.IFileStorageService;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -31,7 +32,7 @@ public class BookService {
     private AuthorRepository authorRepository;
     
     @Autowired
-    private FileUploadService fileUploadService;
+    private IFileStorageService fileStorageService;
     
     public List<Book> findAll() {
         return bookRepository.findAll();
@@ -79,7 +80,7 @@ public class BookService {
             List<String> imagePaths = new ArrayList<>();
             for (MultipartFile imageFile : imageFiles) {
                 if (!imageFile.isEmpty()) {
-                    String imagePath = fileUploadService.saveFile(imageFile, "books");
+                    String imagePath = fileStorageService.saveFile(imageFile, "books");
                     if (imagePath != null) {
                         imagePaths.add(imagePath);
                     }
@@ -180,7 +181,7 @@ public class BookService {
                         if (book.getImagePaths() != null) {
                             logger.info("Deleting {} old images", book.getImagePaths().size());
                             for (String imagePath : book.getImagePaths()) {
-                                fileUploadService.deleteFile(imagePath);
+                                fileStorageService.deleteFile(imagePath);
                             }
                         }
                         
@@ -188,7 +189,7 @@ public class BookService {
                         for (MultipartFile imageFile : imageFiles) {
                             if (!imageFile.isEmpty()) {
                                 logger.info("Processing image file: {}", imageFile.getOriginalFilename());
-                                String imagePath = fileUploadService.saveFile(imageFile, "books");
+                                String imagePath = fileStorageService.saveFile(imageFile, "books");
                                 if (imagePath != null) {
                                     imagePaths.add(imagePath);
                                     logger.info("Saved image with path: {}", imagePath);
@@ -248,7 +249,7 @@ public class BookService {
         Optional<Book> book = findById(id);
         if (book.isPresent() && book.get().getImagePaths() != null) {
             for (String imagePath : book.get().getImagePaths()) {
-                fileUploadService.deleteFile(imagePath);
+                fileStorageService.deleteFile(imagePath);
             }
         }
         bookRepository.deleteById(id);

@@ -66,7 +66,14 @@ public class Book {
             return null;
         }
         return imagePaths.stream()
-                .map(path -> "/uploads/" + path)
+                .map(path -> {
+                    // If it's already a full URL (from Cloudinary), return as is
+                    if (path.startsWith("http://") || path.startsWith("https://")) {
+                        return path;
+                    }
+                    // Otherwise, it's a local path
+                    return "/uploads/" + path;
+                })
                 .collect(Collectors.toList());
     }
     

@@ -7,6 +7,7 @@ import org.springframework.web.multipart.MultipartFile;
 import siwbooks.siwbooks.model.Author;
 import siwbooks.siwbooks.model.Book;
 import siwbooks.siwbooks.repository.AuthorRepository;
+import siwbooks.siwbooks.service.IFileStorageService;
 
 import java.io.IOException;
 import java.time.LocalDate;
@@ -23,7 +24,7 @@ public class AuthorService {
     private AuthorRepository authorRepository;
     
     @Autowired
-    private FileUploadService fileUploadService;
+    private IFileStorageService fileStorageService;
     
     @Autowired
     private BookService bookService;
@@ -55,7 +56,7 @@ public class AuthorService {
         
         // Handle photo upload
         if (photoFile != null && !photoFile.isEmpty()) {
-            String photoPath = fileUploadService.saveFile(photoFile, "authors");
+            String photoPath = fileStorageService.saveFile(photoFile, "authors");
             author.setPhotoPath(photoPath);
         }
         
@@ -80,9 +81,9 @@ public class AuthorService {
         if (photoFile != null && !photoFile.isEmpty()) {
             // Delete old photo if exists
             if (author.getPhotoPath() != null) {
-                fileUploadService.deleteFile(author.getPhotoPath());
+                fileStorageService.deleteFile(author.getPhotoPath());
             }
-            String photoPath = fileUploadService.saveFile(photoFile, "authors");
+            String photoPath = fileStorageService.saveFile(photoFile, "authors");
             author.setPhotoPath(photoPath);
         }
         
@@ -115,7 +116,7 @@ public class AuthorService {
             
             // Delete associated photo file
             if (author.getPhotoPath() != null) {
-                fileUploadService.deleteFile(author.getPhotoPath());
+                fileStorageService.deleteFile(author.getPhotoPath());
             }
         }
         
